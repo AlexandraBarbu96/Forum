@@ -1,0 +1,80 @@
+﻿@model Forum.Models.Category
+@{
+    ViewBag.MesajNoSubjs = "Nu exista niciun subiect nou.";
+    ViewBag.MesajEditat = "Editat la ";
+    ViewBag.MesajNeeditat = "Adaugat la ";
+    ViewBag.DeCatre = " de catre ";
+    ViewBag.bara = " | ";
+}
+
+
+<tr>
+    <th scope="col" style="width:5%"></th>
+    <th scope="col" style="width:65%">
+        <a href="~/@Model.CategoryId/titlu/titlu/1"> @Model.Name</a>
+    </th>
+    <th scope="col" style="width:30%">
+        @if (ViewBag.IsAdmin)
+        {
+            <div style="margin:auto">
+                <a href="~/@Model.CategoryId/editeaza-categorie"> Editeaza</a> @ViewBag.bara
+                <a href="~/@Model.CategoryId/sterge-categorie"> Sterge</a>
+            </div>
+        }
+    </th>
+</tr>
+@if (Model.Subjects.Any())
+{
+    if (ViewContext.RouteData.GetRequiredString("action") == "Index")
+    {
+        Model.Subjects = Model.Subjects.OrderByDescending(a => a.CreateData).Where(a => (a.CreateData.Date.Month == DateTime.Now.Date.Month
+                                                                       && a.CreateData.Date.Year == DateTime.Now.Date.Year)).ToList();
+    }
+    else
+    {
+        Model.Subjects = Model.Subjects.OrderByDescending(a => a.CreateData).ToList();
+    }
+    foreach (var subject in Model.Subjects)
+    {
+        <tr>
+            @if (DateTime.Compare(DateTime.Now.Date, subject.CreateData.Date) == 0)
+                    {
+                <th scope="row">Nou!</th>
+            }
+            else
+            {
+                <th scope="row"></th>
+            }
+            <td>
+                <a href="~/@subject.CategoryId/@subject.SubjectId"> @subject.Title</a>
+            </td>
+            <td>
+                @if (subject.IsEdited)
+                {
+                    @ViewBag.MesajEditat @subject.EditData @ViewBag.DeCatre @subject.Editor.UserName
+                }
+                else
+                {
+                    @ViewBag.MesajNeeditat @subject.CreateData @ViewBag.DeCatre @subject.Creator.UserName
+                }
+
+                @if (ViewContext.RouteData.GetRequiredString("action") == "Details" &&
+                                 User.Identity.IsAuthenticated &&
+                                 (ViewBag.UserId == subject.CreatorId || ViewBag.IsModerator))
+                {
+                    <a href="@subject.CategoryId/@subject.SubjectId/editeaza-subiect">Editeaza</a>
+                            @ViewBag.bara
+                            <a href="@subject.CategoryId/@subject.SubjectId/sterge-subiect">Sterge</a>
+                }
+
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <th scope="row"></th>
+        <td colspan="2">@ViewBag.MesajNoSubjs</td>
+    </tr>
+}

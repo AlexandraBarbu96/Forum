@@ -1,0 +1,115 @@
+﻿
+@model PagedList.IPagedList<Forum.Models.Subject>
+@using PagedList.Mvc
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.MesajNoSubjs = "Nu exista niciun subiect nou.";
+    ViewBag.MesajEditat = "Editat la ";
+    ViewBag.MesajNeeditat = "Adaugat la ";
+    ViewBag.DeCatre = " de catre ";
+    ViewBag.bara = " | ";
+}
+@if (TempData.ContainsKey("danger"))
+{
+    <h4 class="alert alert-danger" role="alert">@ViewBag.danger</h4>
+}
+@if (TempData.ContainsKey("message"))
+{
+    <h4 class="alert alert-info" role="alert">@ViewBag.message</h4>
+}
+<div style="margin-top:5%;">
+    <a href="~/">Inapoi la pagina principala</a>
+</div>
+<style>
+    .float-right {
+        float: right;
+    }
+
+    .mt-100 {
+        margin-top: -15px;
+    }
+</style>
+<div>
+    Sorteaza dupa
+    @Html.RouteLink("Titlu", "CategoriesShow",
+                new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter }) |
+    @Html.RouteLink("Data", "CategoriesShow",
+                new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+</div>
+@using (Html.BeginRouteForm("CategoriesShow", new { currentFilter = ViewBag.CurrentFilter, sortOrder = ViewBag.CurrentSort }, FormMethod.Get))
+{
+    <p>
+        Cauta dupa subiect sau utilizator: @Html.TextBox("searchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+    <div class="">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a href="~/@ViewBag.CategoryId/adauga-subiect" role="button" class="btn btn-primary float-right" style="margin-top: -80px;">Adauga Subiect</a>
+        }
+    </div>
+<table class="table table-striped table-bordered" style="margin-top:2%;">
+
+    <tr>
+
+        <th scope="col" style="width:65%">
+            <a href="~/@ViewBag.CategoryId"> @ViewBag.Title</a>
+        </th>
+        <th scope="col" style="width:35%">
+            @if (ViewBag.IsAdmin)
+            {
+                <div style="margin:auto">
+                    
+                    <a href="~/@ViewBag.CategoryId/editeaza-categorie"> Editeaza</a> @ViewBag.bara
+                    <a href="~/@ViewBag.CategoryId/sterge-categorie"> Sterge</a>
+                </div>
+            }
+        </th>
+    </tr>
+    @if (Model.Any())
+    {
+        foreach (var subject in Model.OrderByDescending(a => a.CreateData))
+        {
+            <tr>
+               
+                <td>
+                    <a href="~/@subject.CategoryId/@subject.SubjectId"> @subject.Title</a>
+                </td>
+                <td>
+                    @if (subject.IsEdited)
+                    {
+                        @ViewBag.MesajEditat @subject.EditData @ViewBag.DeCatre @subject.Editor.UserName
+                    }
+                    else
+                    {
+                        @ViewBag.MesajNeeditat @subject.CreateData @ViewBag.DeCatre @subject.Creator.UserName
+                    }
+
+                    @if (User.Identity.IsAuthenticated &&
+                        (ViewBag.UserId == subject.CreatorId || ViewBag.IsModerator))
+                    {
+                        <a href="~/@subject.CategoryId/@subject.SubjectId/editeaza-subiect">Editeaza</a>
+                        @ViewBag.bara
+                        <a href="~/@subject.CategoryId/@subject.SubjectId/sterge-subiect">Sterge</a>
+                    }
+
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+           
+            <td colspan="2">@ViewBag.MesajNoSubjs</td>
+        </tr>
+    }
+</table>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.HttpRouteUrl("CategoriesShow", new { id = ViewBag.CategoryId, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, page }))
+<div style="margin-bottom:5%;">
+    <a href="~/">Inapoi la pagina principala</a>
+</div>

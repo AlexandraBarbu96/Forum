@@ -1,0 +1,22 @@
+﻿@model Forum.Models.Category
+
+@{
+    ViewBag.Title = "Sterge Categorie";
+}
+@using (Html.BeginForm())
+{
+    @Html.HttpMethodOverride(HttpVerbs.Delete)
+    @Html.AntiForgeryToken()
+    <div>
+        <h4>@ViewBag.Title</h4>
+        <div>
+            <a href="~/">Inapoi la pagina principala</a>
+        </div>
+        <hr />
+        <h3>Sunteti sigur ca vreti sa stergeti categoria @Model.Name?</h3>
+        <div class="form-actions no-color">
+            <input type="submit" value="Sterge" class="btn btn-default" />
+        </div>
+    </div>
+}
+

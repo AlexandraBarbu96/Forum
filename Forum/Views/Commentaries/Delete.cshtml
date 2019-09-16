@@ -1,0 +1,40 @@
+﻿@model Forum.Models.Commentary
+
+@{
+    ViewBag.Title = "Sterge Comentariu";
+}
+@using (Html.BeginForm())
+{
+    @*@Html.HttpMethodOverride(HttpVerbs.Delete)*@
+    @Html.AntiForgeryToken()
+    <div>
+        <h4>@ViewBag.Title</h4>
+        <div>
+            <a href="~/">Inapoi la pagina principala</a>
+        </div>
+        <hr />
+        <h3>Sunteti sigur ca vreti sa stergeti comentariul?</h3>
+        <dl class="dl-horizontal">
+            <dt>
+                Subiect
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Subject.Title)
+            </dd>
+
+            <dt>
+                Raspuns
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Reply)
+            </dd>
+
+        </dl>
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Sterge" class="btn btn-default" />
+        </div>
+    </div>
+}

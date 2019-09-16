@@ -1,0 +1,15 @@
+================================ ForumContext ================================
+Enable-Migrations -ContextTypeName ForumContext -MigrationsDirectory Migrations\ForumContext
+
+//pentru cand se modifica modelul
+add-migration -ConfigurationTypeName Forum.Migrations.ForumContext.Configuration "InitialCreate"
+
+update-database -ConfigurationTypeName Forum.Migrations.ForumContext.Configuration
+
+================================ ForumContext ================================
+Enable-Migrations -ContextTypeName ApplicationDbContext -MigrationsDirectory Migrations\Identity
+
+//pentru cand se modifica modelul
+add-migration -ConfigurationTypeName Forum.Migrations.Identity.Configuration "InitialIdentity"
+
+update-database -ConfigurationTypeName Forum.Migrations.Identity.Configuration

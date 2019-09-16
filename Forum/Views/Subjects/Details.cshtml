@@ -1,0 +1,149 @@
+﻿@model Forum.Models.Subject
+@{
+    ViewBag.Title = Model.Title;
+    ViewBag.MesajNoCom = "Niciun comentariu.";
+    ViewBag.bara = " | ";
+}
+@if (TempData.ContainsKey("danger"))
+{
+    <h4 class="alert alert-danger" role="alert">@ViewBag.danger</h4>
+}
+@if (TempData.ContainsKey("message"))
+{
+    <h4 class="alert alert-info" role="alert">@ViewBag.message</h4>
+}
+<div class="col-sm-4">
+
+</div>
+<div class="col-sm-4">
+
+</div>
+<div class="col-sm-4">
+    @if (ViewBag.IsMember)
+    {      
+        <a href="~/@Model.CategoryId/@Model.SubjectId/adauga-comentariu" role="button" class="btn btn-primary float-right" style="margin-top: -80px;">Adauga Comentariu</a>
+    }
+</div>
+
+<div class="container-fluid" style="margin-top:3%">
+    <div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @Model.Creator.UserName
+                </div>
+                <div class="panel-body" style="margin-bottom:30%">
+                    @if (Model.Creator.Files.Any(f => f.FileType == Forum.Models.FileType.Avatar))
+                    {
+                        <img src="~/Files?id=@Model.Creator.Files.First(f => f.FileType == Forum.Models.FileType.Avatar).FileId" alt="" class="img-thumbnail" height="100" width="100" />
+                    }
+                
+                    @*<img src="@Url.Action("UserPhotos", "Users", new { userId = Model.CreatorId} )" height="48" width="48" /> *@
+                </div>
+                <div class="panel-footer">
+                    <div>Membru de la @Model.Creator.SignInDate</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="~/">Categorii</a> >> <a href="~/@Model.CategoryId">@Model.Category.Name</a> >> @ViewBag.Title
+                </div>
+                <div class="panel-body" style="margin-bottom:30%">
+                    @Model.Content
+                </div>
+                <div class="panel-footer">
+                    @if (Model.IsEdited)
+                    {
+                        <i>
+                            Editat la @Model.EditData de catre @Model.Editor.UserName
+                        </i>
+                    }
+                    else
+                    {
+                        <span>
+                            Adaugat la @Model.CreateData
+                        </span>
+                    }
+                    @if ((ViewBag.IsMember && ViewBag.UserId == Model.CreatorId) ||
+                        ViewBag.IsModerator)
+                    {
+                        <span style="margin-left:55%">
+                            <a href="~/@Model.CategoryId/@Model.SubjectId/editeaza-subiect">Editeaza</a> |
+                            <a href="~/@Model.CategoryId/@Model.SubjectId/sterge-subiect"> Sterge </a>
+                        </span>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (Model.Commentaries.Any())
+    {
+            foreach (var com in Model.Commentaries)
+            {
+    <div>
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @com.User.UserName
+                </div>
+                <div class="panel-body" style="margin-bottom:30%">
+                    @if (com.User.Files.Any(f => f.FileType == Forum.Models.FileType.Avatar))
+                    {
+                        <img src="~/Files?id=@com.User.Files.First(f => f.FileType == Forum.Models.FileType.Avatar).FileId" alt="" class="img-thumbnail" height="100" width="100" />
+                    }
+                    @*<img src="@Url.Action("UserPhotos", "Users", new { userId = com.UserId} )" height="48" width="48" /> *@
+                </div>
+                <div class="panel-footer">
+                    <div>Postat la @com.CreateData</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Re:@Model.Title
+                </div>
+                <div class="panel-body" style="margin-bottom:30%">
+                    @com.Reply
+                </div>
+                <div class="panel-footer">
+                    @if (com.IsEdited)
+                    {
+                        <i>
+                            Editat la @com.EditData
+                        </i>
+                    }
+                    else
+                    {
+                        <span>
+                            Adaugat la @com.CreateData
+                        </span>
+                    }
+                    @if (ViewBag.IsMember && ViewBag.UserId == com.UserId)
+                    {
+                        <span style="margin-left:55%">
+                            <a href="~/@Model.CategoryId/@com.SubjectId/@com.CommentaryId/editeaza-comentariu">Editeaza</a> @ViewBag.bara
+                            <a href="~/@Model.CategoryId/@com.SubjectId/@com.CommentaryId/sterge-comentariu"> Sterge </a>
+                        </span>
+
+                    }
+                    else if (ViewBag.IsModerator)
+                    {
+                        <span style="margin-left:60%">
+                            <a href="~/@Model.CategoryId/@com.SubjectId/@com.CommentaryId/sterge-comentariu"> Sterge </a>
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+            }
+    }
+    else
+    {
+        @ViewBag.MesajNoCom
+    }
+</div>

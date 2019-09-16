@@ -1,0 +1,136 @@
+﻿@model List<Forum.Models.Category>
+
+@{
+    ViewBag.Title = "Categorii";
+    ViewBag.MesajNoCats = "Nu exista nicio categorie.";
+    ViewBag.MesajNoSubjs = "Nu exista niciun subiect nou.";
+    ViewBag.MesajEditat = "Editat la ";
+    ViewBag.MesajNeeditat = "Adaugat la ";
+    ViewBag.DeCatre = " de catre ";
+    ViewBag.bara = " | ";
+}
+<style>
+    .float-right {
+        float: right;
+    }
+
+    .link-panel {
+        padding: 4rem;
+        margin: 1rem;
+        border: 2px solid #e1e1e1;
+        border-radius: 5px;
+        width: 30%;
+        display: inline-block;
+        height: 170px;
+        text-align: center;
+        font-size: 30px;
+        text-decoration: none;
+        color: black;
+    }
+
+        .link-panel:hover, .link-panel:focus {
+            text-decoration: none;
+            color: black;
+            border: 2px solid #9f9f9f;
+        }
+</style>
+@if (TempData.ContainsKey("danger"))
+{
+    <h4 class="alert alert-danger" role="alert">@ViewBag.danger</h4>
+}
+@if (TempData.ContainsKey("message"))
+{
+    <h4 class="alert alert-info" role="alert">@ViewBag.message</h4>
+}
+
+<div class="">
+    @if (ViewBag.IsAdmin)
+    {
+        <a href="~/adauga-categorie" role="button" class="btn btn-primary float-right" style="margin-top: -80px;">Adauga Categorie</a>
+    }
+    @if (ViewBag.IsMember)
+    {
+        <a href="~/adauga-subiect" role="button" class="btn btn-primary float-right" style="margin-top: -80px;">Adauga Subiect</a>
+    }
+
+</div>
+
+@if (Model.AsEnumerable().Any())
+{
+    <script>
+        function changeurl(url) {
+            location.href = url;
+        }
+    </script>
+    <div class="container ">
+        @foreach (var category in Model.AsEnumerable())
+        {
+            <div onclick="changeurl('/@category.CategoryId.ToString()')" class="link-panel">
+                @category.Name
+                <div>
+                    @if (ViewBag.IsAdmin)
+                    {
+                        <div style="margin:auto">
+                            <a href="~/@category.CategoryId/editeaza-categorie">Editeaza</a> @ViewBag.bara
+                            <a href="~/@category.CategoryId/sterge-categorie">Sterge</a>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @*
+                if (category.Subjects.Any())
+                {
+                    foreach (var subject in category.Subjects.OrderByDescending(a => a.CreateData).Where(a => (a.CreateData.Date.Month == DateTime.Now.Date.Month
+                                                                                       && a.CreateData.Date.Year == DateTime.Now.Date.Year)).ToList())
+                    {
+                        <tr>
+                            @if (DateTime.Compare(DateTime.Now.Date, subject.CreateData.Date) == 0)
+                            {
+                                <th scope="row">Nou!</th>
+                            }
+                            else
+                            {
+                                <th scope="row"></th>
+                            }
+                            <td>
+                                <a href="~/@subject.CategoryId/@subject.SubjectId"> @subject.Title</a>
+                            </td>
+                            <td>
+                                @if (subject.IsEdited)
+                                {
+                                    @ViewBag.MesajEditat @subject.EditData @ViewBag.DeCatre @subject.Editor.UserName
+                                }
+                                else
+                                {
+                                    @ViewBag.MesajNeeditat @subject.CreateData @ViewBag.DeCatre @subject.Creator.UserName
+                                }
+
+                                @if (User.Identity.IsAuthenticated &&
+                                    (ViewBag.UserId == subject.CreatorId || ViewBag.IsModerator))
+                                {
+                                    <a href="@subject.CategoryId/@subject.SubjectId/editeaza-subiect">Editeaza</a>
+                                    @ViewBag.bara
+                                    <a href="@subject.CategoryId/@subject.SubjectId/sterge-subiect">Sterge</a>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th scope="row"></th>
+                        <td colspan="2">@ViewBag.MesajNoSubjs</td>
+                    </tr>
+                }*@
+
+        }
+    </div>
+}
+else
+{
+    <div class="panel" style="padding: 2rem;">@ViewBag.MesajNoCats</div>
+}

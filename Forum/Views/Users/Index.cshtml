@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Forum.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Utilizatori";
+}
+
+@if (TempData.ContainsKey("message"))
+{
+    <h4 class="alert alert-info" role="alert">@ViewBag.message</h4>
+}
+<h4>@ViewBag.Title</h4>
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                <a href="~/utilizatori/@item.UserName/editeaza-utilizator">Editeaza</a> |
+                <a href="~/utilizatori/@item.UserName/sterge-utilizator">Sterge</a>
+            </td>
+        </tr>
+    }
+</table>
+

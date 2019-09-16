@@ -1,0 +1,48 @@
+﻿@model Forum.Models.Subject
+
+@{
+    ViewBag.Title = "Sterge Subiect";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HttpMethodOverride(HttpVerbs.Delete)
+    <div>
+        <h4>@ViewBag.Title</h4>
+        <div>
+            <a href="~/">Inapoi la pagina principala</a>
+        </div>
+        <hr />
+        <h3>Sunteti sigur ca vreti sa stergeti subiectul?</h3>
+        <dl class="dl-horizontal">
+            <dt>
+                Categorie
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Category.Name)
+            </dd>
+
+            <dt>
+                Titlu
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+
+            <dt>
+                Continut
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Content)
+            </dd>
+
+        </dl>
+        <div class="form-actions no-color">
+            <input type="submit" value="Sterge" class="btn btn-default" />
+        </div>
+    </div>
+}
